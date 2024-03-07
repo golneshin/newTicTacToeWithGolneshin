@@ -1,0 +1,8 @@
+const GAME_STATE = {
+  PLAYER_X_WON: 'PLAYER _X_ WON !!!',
+  PLAYER_O_WON: 'PLAYER _O_ WON !!!',
+  MATCH_DRAW: 'MATCH DRAW !!!',
+  MATCH_IS_PROCEEDING: 'PLAY WISELY !!!',
+};
+
+export default GAME_STATE;
