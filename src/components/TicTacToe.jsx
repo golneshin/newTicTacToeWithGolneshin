@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import GAME_STATE from "./game-state";
 import Board from "./board";
 import clickSound from '../assets/sounds/click.wav';
@@ -31,7 +31,7 @@ const TicTacToe = () => {
     setPlayerTurn(playerTurn===PLAYER_X ? PLAYER_O : PLAYER_X);
   };
 
-  const calculateWinner = () => {
+  const calculateWinner = useCallback(() => {
     const winArray = [
       // row
       {windex: [0,1,2], strikeClass: 'strike-row-1'},
@@ -62,28 +62,28 @@ const TicTacToe = () => {
         return; // Exit loop once a winner is found
       }
     } 
-    calculateDraw();
-  };
+  }, [setGameState, playerTurn, tiles]);
 
-  useEffect(() => {
-    calculateWinner();
-
-    if (tiles.some((tile) => tile !== null)) {
-      CLICK_SOUND.play();
-    }
-
-    if (gameState !== GAME_STATE.MATCH_IS_PROCEEDING) {
-      GAME_OVER_SOUND.play();
-    }
-  }, [tiles, gameState]);
-
-  const calculateDraw = () => {
+  const calculateDraw = useCallback(() => {
     if (tiles.every((tile) => tile !== null)) {
       setLock(true);
       setGameState(GAME_STATE.MATCH_DRAW);
       return; // Exit once the match draw
     }
-  };   
+  }, [tiles]);   
+
+  useEffect(() => {
+    calculateDraw();
+    calculateWinner();
+
+    if (tiles.some((tile) => tile !== null)) {
+      CLICK_SOUND.play();
+    } 
+
+    if (gameState !== GAME_STATE.MATCH_IS_PROCEEDING) {
+      GAME_OVER_SOUND.play();
+    }
+  }, [tiles, gameState, calculateWinner, calculateDraw]);
 
   const reset = () => {
     setTiles(Array(9).fill(null));
